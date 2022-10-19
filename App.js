@@ -1,20 +1,37 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { Component } from 'react';
 
-export default function App() {
+import 'react-native-gesture-handler';
+
+// import components (screens) we want to navigate
+import Start from './components/Start'
+import Chat from './components/Chat'
+
+// import react Navigation
+import { NavigationContainer } from '@react-navigation/native';
+// import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+// Navigation
+// Stack Navigation
+// const Stack = createStackNavigator();
+
+// Tab Navigation
+const Tab = createBottomTabNavigator();
+
+export default class App extends React.Component {
+  // constructor(props){
+  //   super(props);
+  //   this.state = { text: "" };
+  // }
+
+    render() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Tab.Navigator initialRouteName="Start">
+        <Tab.Screen name="Start" component={Start} />
+        <Tab.Screen name="Chat" component={Chat} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+}
