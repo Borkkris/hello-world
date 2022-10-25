@@ -20,7 +20,8 @@ export default class Chat extends React.Component {
 
     this.setState({
       // each message requires an _id, a creation date, and a user object
-      messages: [
+      messages: [ 
+        // static message
         {
           _id: 1,
           text: 'Hello developer',
@@ -32,7 +33,8 @@ export default class Chat extends React.Component {
             avatar: 'https://placeimg.com/140/140/any',
           },
         },
-        { // system message
+        // system message
+        { 
           _id: 3,
           text: 'You entered the Chat (.tipIT)',
           createdAt: new Date,
