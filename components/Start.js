@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { View, Text, Button, TextInput, StyleSheet, ImageBackground, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
-import ScrollViewCommands from 'react-native/Libraries/Components/ScrollView/ScrollViewCommands';
 
 export default class Start extends Component {
   constructor(props) {
     super(props);
-    this.state = { name: '', color: '' }
+    this.state = {  name: '', 
+                    color: '' }
   }
 
   render() {
@@ -17,11 +17,13 @@ export default class Start extends Component {
 
           <View style={styles.box}>            
             {/* More than 2 styles we use [] */}
+            {/*Allows user to input name to display in chat*/}
             <TextInput style={[styles.input, styles.text]}
               onChangeText={(name) => this.setState({ name })}
               value={this.state.name}
               placeholder='Your Name'
             />
+            {/* Allows users to pick a color */}
             <View style={styles.colorWrapper}>
               <Text style={[styles.textWrapper, styles.label]}>Choose Background Color</Text>
               <View style={styles.colors}>
@@ -140,11 +142,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#B9C6AE',
   },
 
-  buttonWrapper: {
-    width: '88%',
-    flex: 1,
-    justifyContent: 'end',
-  },
+  // buttonWrapper: {
+  //   width: '88%',
+  //   flex: 1,
+  //   justifyContent: 'end',
+  // },
 
   button: {
     backgroundColor: '#9568445a',
