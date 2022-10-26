@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Button, TextInput, StyleSheet, ImageBackground, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
 
 export default class Start extends Component {
   constructor(props) {

@@ -36,7 +36,9 @@ export default class Chat extends React.Component {
             firebase.initializeApp(firebaseConfig);
         }
 
-        this.referenceChatMessages = null;
+        this.referenceMessages = firebase
+        .firestore()
+        .collection('messages');
 
   }
 
@@ -62,7 +64,7 @@ export default class Chat extends React.Component {
         uid: user.uid,
         messages: [],
         user: {
-          _id: user.uid,
+          _id: user._id,
           name: name,
         },
       });
