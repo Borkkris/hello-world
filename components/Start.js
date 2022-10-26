@@ -13,7 +13,7 @@ export default class Start extends Component {
       <View style={styles.container}>
         <ImageBackground source={require('../assets/Background-Image.jpg')}style={styles.image}>
 
-            <Text style={styles.title}>.tipIT</Text>
+            <Text style={styles.title}>tipIT</Text>
 
           <View style={styles.box}>            
             {/* More than 2 styles we use [] */}
