@@ -1,7 +1,6 @@
 import React, { useId } from 'react';
 import { View, Platform, KeyboardAvoidingView } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
-
 // required to make firebase work
 // Import functions from SDKs
 const firebase = require('firebase');
@@ -18,7 +17,8 @@ export default class Chat extends React.Component {
         _id: '',
         name:'',
         avatar:'',
-      }
+      },
+      isConnected: null,
 
     }
 
@@ -35,11 +35,39 @@ export default class Chat extends React.Component {
     if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
-
+        
+        // Reference to Firestore collection
         this.referenceChatMessages = firebase
         .firestore()
         .collection('messages');
+  }
 
+  // the onCollectionUpdate writes the chat messages to state messages
+  // Whenever something changes in the messages collection (and, thus, when onSnapshot() is fired), this function needs to be called, like this onCollectionUpdate() function. 
+  // This function needs to retrieve the current data in the messages collection and store it in the state lists, allowing that data to be rendered in the view
+  onCollectionUpdate = (querySnapshot) => {
+    const messages = [];
+    // go through each document
+    querySnapshot.forEach((doc) => {
+      // get the QueryDocumentSnapshot's data
+      let data = doc.data();
+      messages.push({
+        _id: data._id,
+        text: data.text,
+        createdAt: data.createdAt.toDate(),
+        user: {
+           _id: data.user._id,
+          name: data.user.name,
+          avatar: data.user.avatar || '',
+        },
+        image: data.image || null,
+        location: data.location || null,
+      });
+    });
+     // the empty messages getting updated here
+    this.setState({
+      messages,
+    }); 
   }
 
   //  method allows us to execute the React code when the component is already placed in the DOM (Document Object Model). 
@@ -77,34 +105,13 @@ export default class Chat extends React.Component {
   }
 
   componentWillUnmount() {
-    // stops listening to the collection changes
-    this.unsubscribe();
-    // stop listening to authentication
-    this.authUnsubscribe();
+    if (this.isConnected) {
+      // stops listening to the collection changes
+      this.unsubscribe();
+      // stop listening to authentication
+      this.authUnsubscribe();
+    }
   }
-
-  // the onCollectionUpdate writes the chat messages to state messages
-  // Whenever something changes in the messages collection (and, thus, when onSnapshot() is fired), this function needs to be called, like this onCollectionUpdate() function. 
-  // This function needs to retrieve the current data in the messages collection and store it in the state lists, allowing that data to be rendered in the view
-  onCollectionUpdate = (querySnapshot) => {
-    const messages = [];
-    // go through each document
-    querySnapshot.forEach((doc) => {
-      // get the QueryDocumentSnapshot's data
-      let data = doc.data();
-      messages.push({
-        _id: data._id,
-        text: data.text,
-        createdAt: data.createdAt.toDate(),
-        user: data.user,
-      });
-    });
-     // the empty messages getting updated here
-    this.setState({
-      messages,
-    }); 
-  }
-
   
   // the message a user has just sent gets appended to the state messages so that it can be displayed in the chat
   onSend(messages = []) {
@@ -112,6 +119,7 @@ export default class Chat extends React.Component {
       messages: GiftedChat.append(previousState.messages, messages),
     }))
   }
+
   // renders the bubble where the message is in
   renderBubble(props) {
     return (
@@ -127,20 +135,17 @@ export default class Chat extends React.Component {
   }
 
   // adds a new mesasage to the Chat with some informations
-  addMessage() {
-
-    const message = this.state.messages[0];
-
+  addMessages = (message) => {
     this.referenceChatMessages.add({
       uid: this.state.uid,
       _id: message._id,
       text: message.text || '',
       createdAt: message.createdAt,
-      user:message.user,
-      image:message.image || null,
+      user: message.user,
+      image: message.image || null,
       location: message.location || null,
     });
-  }
+  };
 
   render() {
 
