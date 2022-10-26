@@ -157,10 +157,8 @@ export default class Chat extends React.Component {
         <GiftedChat 
           renderBubble={this.renderBubble.bind(this)}
           messages={this.state.messages}
-          onSend={messages => this.onSend(messages)}
-          user={{
-            _id:1
-          }}
+          onSend={(messages) => this.onSend(messages)}
+          user={{ _id: this.state.user._id, name: this.state.user.name }}
         />       
         {/* for Android so that the input field won’t be hidden beneath the keyboard */}
         { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null }
