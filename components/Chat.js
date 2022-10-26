@@ -36,7 +36,7 @@ export default class Chat extends React.Component {
             firebase.initializeApp(firebaseConfig);
         }
 
-        this.referenceMessages = firebase
+        this.referenceChatMessages = firebase
         .firestore()
         .collection('messages');
 
@@ -50,7 +50,7 @@ export default class Chat extends React.Component {
     this.props.navigation.setOptions({ title: name });
 
     // reference to read all the documents in the "messages" collection
-    this.referenceMessages = firebase
+    this.referenceChatMessages = firebase
     .firestore()
     .collection('messages');
 
@@ -61,7 +61,7 @@ export default class Chat extends React.Component {
       }
 
       this.setState ({
-        uid: user.uid,
+        uid: user._id,
         messages: [],
         user: {
           _id: user._id,
