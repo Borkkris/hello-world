@@ -25,8 +25,7 @@ export default class Chat extends React.Component {
         name:'',
         avatar:'',
       },
-      isConnected: null,
-
+      // isConnected: null,
     }
 
     // My web app's Firebase configuration
@@ -114,7 +113,17 @@ export default class Chat extends React.Component {
     }
   };
 
-  
+  // only renders the default inputToolbar when user is online
+  renderInputToolbar(props) {
+    if (this.state.isConnected == false){
+    } else {
+      return(
+        <InputToolbar 
+          {...props}
+        />
+      );
+    } 
+  }
 
   //  method allows us to execute the React code when the component is already placed in the DOM (Document Object Model). 
   // This method is called during the Mounting phase of the React Life-cycle i.e after the component is rendered.
@@ -166,10 +175,12 @@ export default class Chat extends React.Component {
       }
 
   componentWillUnmount() {
+    if (this.isConnected) {
       // stops listening to the collection changes
       this.unsubscribe();
       // stop listening to authentication
       this.authUnsubscribe();
+    }
   }
 
   // adds a new mesasage to the Chat with some informations
@@ -210,18 +221,6 @@ export default class Chat extends React.Component {
     );
   }
 
-  // only renders the default inputToolbar when user is online
-  renderInputToolbar(props) {
-    if (this.state.isConnected == false){
-    } else {
-      return(
-        <InputToolbar 
-          {...props}
-        />
-      );
-    } 
-  }
-
   render() {
 
   let { color, name } = this.props.route.params;
@@ -231,6 +230,10 @@ export default class Chat extends React.Component {
 
         <GiftedChat 
           renderBubble={this.renderBubble.bind(this)}
+
+          renderInputToolbar={this.renderInputToolbar.bind(this)}
+          // renderInputToolbar={this.state.renderInputToolbar}      
+
           messages={this.state.messages}
           onSend={(messages) => this.onSend(messages)}
           user={{ _id: this.state.user._id, name: name }}
