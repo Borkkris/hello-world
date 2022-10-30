@@ -175,12 +175,10 @@ export default class Chat extends React.Component {
       }
 
   componentWillUnmount() {
-    if (this.isConnected) {
       // stops listening to the collection changes
       this.unsubscribe();
       // stop listening to authentication
       this.authUnsubscribe();
-    }
   }
 
   // adds a new mesasage to the Chat with some informations
