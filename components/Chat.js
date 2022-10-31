@@ -25,7 +25,7 @@ export default class Chat extends React.Component {
         name:'',
         avatar:'',
       },
-      isConnected: null,
+      isConnected: false,
     }
 
     // My web app's Firebase configuration
@@ -113,18 +113,6 @@ export default class Chat extends React.Component {
     }
   };
 
-  // only renders the default inputToolbar when user is online
-  renderInputToolbar(props) {
-    if (this.state.isConnected == false){
-    } else {
-      return(
-        <InputToolbar 
-          {...props}
-        />
-      );
-    } 
-  }
-
   //  method allows us to execute the React code when the component is already placed in the DOM (Document Object Model). 
   // This method is called during the Mounting phase of the React Life-cycle i.e after the component is rendered.
   componentDidMount() {
@@ -138,11 +126,12 @@ export default class Chat extends React.Component {
     // find out the user's connection status, you can call the fetch() method on NetInfo, which returns a promise
     NetInfo.fetch().then(connection => {
       if (connection.isConnected) {
-        console.log('online');
         this.setState({isConnected: true});
+        console.log('online');
       } else {
-        console.log('offline');
         this.setState({isConnected: false});
+        console.log('offline');
+
       }
       });
 
@@ -221,6 +210,18 @@ export default class Chat extends React.Component {
     );
   }
 
+  // only renders the default inputToolbar when user is online
+  renderInputToolbar(props) {
+    if (this.state.isConnected == false){
+    } else {
+      return(
+        <InputToolbar 
+          {...props}
+        />
+      );
+    } 
+  }
+
   render() {
 
   let { color, name } = this.props.route.params;
@@ -230,10 +231,7 @@ export default class Chat extends React.Component {
 
         <GiftedChat 
           renderBubble={this.renderBubble.bind(this)}
-
           renderInputToolbar={this.renderInputToolbar.bind(this)}
-          // renderInputToolbar={this.state.renderInputToolbar}      
-
           messages={this.state.messages}
           onSend={(messages) => this.onSend(messages)}
           user={{ _id: this.state.user._id, name: name }}
