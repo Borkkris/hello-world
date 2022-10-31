@@ -126,9 +126,11 @@ export default class Chat extends React.Component {
     // find out the user's connection status, you can call the fetch() method on NetInfo, which returns a promise
     NetInfo.fetch().then(connection => {
       if (connection.isConnected) {
-        console.log('online');
+        
         this.setState({
-          isConnected: true});
+          isConnected: true,
+        })
+        console.log('online');
     
 
         // reference to read all the documents in the "messages" collection
