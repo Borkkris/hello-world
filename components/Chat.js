@@ -116,59 +116,65 @@ export default class Chat extends React.Component {
   //  method allows us to execute the React code when the component is already placed in the DOM (Document Object Model). 
   // This method is called during the Mounting phase of the React Life-cycle i.e after the component is rendered.
   componentDidMount() {
+
      //Display username in navigation
     let name = this.props.route.params.name;
     this.props.navigation.setOptions({ title: name });
 
-    // function that loads the messages from asyncStorage
-    this.getMessages();
+  
 
     // find out the user's connection status, you can call the fetch() method on NetInfo, which returns a promise
     NetInfo.fetch().then(connection => {
       if (connection.isConnected) {
         console.log('online');
-        this.setState({isConnected: true});
-      } else {
+        this.setState({
+          isConnected: true});
+    
+
+        // reference to read all the documents in the "messages" collection
+        this.referenceChatMessages = firebase.firestore().collection('messages');
+
+        // Authenticate user anonymously using Firebase
+        // listens to authentication changes
+        this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
+          if(!user) {
+            firebase.auth().signInAnonymously();
+          }
+
+          this.setState ({
+            uid: this.state.user._id,
+            messages: [],
+            user: {
+              _id: this.state.user._id,
+              name: name,
+            },
+          });
+          // once the user is authenticated the onSnapshot() creates an updated snapshot of the collection
+          // the onCollectionUpdate writes the chat messages to state messages
+          this.unsubscribe = this.referenceChatMessages
+          .orderBy('createdAt', 'desc')
+          .onSnapshot(this.onCollectionUpdate);
+          this.saveMessages();
+        });
+      }
+      // if user is offline, mesages will be load and displayed by asyncStorage
+      else {
+        this.setState({
+          isConnected: false,
+        });
         console.log('offline');
-        this.setState({isConnected: false});
+        this.getMessages();
       }
     });
-
-    // reference to read all the documents in the "messages" collection
-    this.referenceChatMessages = firebase
-    .firestore()
-    .collection('messages');
-
-    // Authenticate user anonymously using Firebase
-    // listens to authentication changes
-    this.authUnsubscribe = firebase
-    .auth()
-    .onAuthStateChanged((user) => {
-      if(!user) {
-        firebase.auth().signInAnonymously();
-      }
-
-      this.setState ({
-        uid: this.state.user._id,
-        messages: [],
-        user: {
-          _id: this.state.user._id,
-          name: name,
-        },
-      });
-        // once the user is authenticated the onSnapshot() creates an updated snapshot of the collection
-        // the onCollectionUpdate writes the chat messages to state messages
-        this.unsubscribe = this.referenceChatMessages
-       .orderBy("createdAt", "desc")
-       .onSnapshot(this.onCollectionUpdate);
-    });
-      }
+  }
 
   componentWillUnmount() {
+    if (this.isConnected) {
       // stops listening to the collection changes
       this.unsubscribe();
       // stop listening to authentication
       this.authUnsubscribe();
+    }
   }
 
   // adds a new mesasage to the Chat with some informations
