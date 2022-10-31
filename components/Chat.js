@@ -74,6 +74,8 @@ export default class Chat extends React.Component {
     this.setState({
       messages,
     }); 
+    // safes the messages when user is offline
+    this.saveMessages();
   }
 
   // retrieve chat messages from asyncStorage (instead of filling your message state with static data)
@@ -156,7 +158,6 @@ export default class Chat extends React.Component {
           this.unsubscribe = this.referenceChatMessages
           .orderBy('createdAt', 'desc')
           .onSnapshot(this.onCollectionUpdate);
-          this.saveMessages();
         });
       }
       // if user is offline, mesages will be load and displayed by asyncStorage
