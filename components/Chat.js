@@ -25,7 +25,7 @@ export default class Chat extends React.Component {
         name:'',
         avatar:'',
       },
-      // isConnected: null,
+      isConnected: null,
     }
 
     // My web app's Firebase configuration
@@ -139,8 +139,10 @@ export default class Chat extends React.Component {
     NetInfo.fetch().then(connection => {
       if (connection.isConnected) {
         console.log('online');
+        this.setState({isConnected: true});
       } else {
         console.log('offline');
+        this.setState({isConnected: false});
       }
       });
 
