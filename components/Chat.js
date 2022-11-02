@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Platform, KeyboardAvoidingView } from 'react-native';
+import { View, Platform, KeyboardAvoidingView, Button } from 'react-native';
 import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
 
 // importing react-natives storage-system asyncStorage
@@ -7,6 +7,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // to check if user is online or offline
 import NetInfo from '@react-native-community/netinfo';
+
+// Component CustomActions (Action Button)
+import CustomActions from './CustomActions';
+
+// MapView Component
+import MapView from 'react-native-maps';
+
 
 // required to make firebase work
 // Import functions from SDKs
@@ -123,7 +130,6 @@ export default class Chat extends React.Component {
     let name = this.props.route.params.name;
     this.props.navigation.setOptions({ title: name });
 
-  
 
     // find out the user's connection status, you can call the fetch() method on NetInfo, which returns a promise
     NetInfo.fetch().then(connection => {
@@ -133,7 +139,6 @@ export default class Chat extends React.Component {
           isConnected: true,
         })
         console.log('online');
-    
 
         // reference to read all the documents in the "messages" collection
         this.referenceChatMessages = firebase.firestore().collection('messages');
@@ -147,7 +152,33 @@ export default class Chat extends React.Component {
 
           this.setState ({
             uid: this.state.user._id,
-            messages: [],
+            messages: [
+              // object 1
+              {
+              _id: 1,
+              text: 'My message',
+              createdAt: new Date(Date.UTC(2016, 5, 11, 17, 20, 0)),
+              user: {
+                _id: 2,
+                name: 'React Native',
+                avatar: 'https://facebook.github.io/react-native/img/header_logo.png',
+              },
+              image: 'https://facebook.github.io/react-native/img/header_logo.png',
+              },
+              // Object 2
+              {
+              _id: 1,
+              createdAt: new Date(),
+              user: {
+                _id: 2,
+                name: 'React Native',
+                avatar: 'https://placeimg.com/140/140/any',
+              },
+              location: {
+                latitude: 48.864601,
+                longitude: 2.398704,
+              },
+            }],
             user: {
               _id: this.state.user._id,
               name: name,
@@ -169,6 +200,7 @@ export default class Chat extends React.Component {
         this.getMessages();
       }
     });
+    
   }
 
   componentWillUnmount() {
@@ -230,9 +262,38 @@ export default class Chat extends React.Component {
     } 
   }
 
+  // responsible for creating the circle button
+  renderCustomActions = (props) => {
+    return <CustomActions {...props} />;
+   };
+
+  
+  renderCustomView (props) {
+  const { currentMessage} = props;
+  if (currentMessage.location) {
+    return (
+        <MapView
+          style={{width: 150,
+            height: 100,
+            borderRadius: 13,
+            margin: 3}}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,}}
+         />
+     );
+   }
+   return null;
+ }
+
+ 
+
   render() {
 
-  let { color, name } = this.props.route.params;
+  let { color, name, speak } = this.props.route.params;
+
 
     return (
       <View style = {{ backgroundColor: color, flex:1}}> 
@@ -243,7 +304,12 @@ export default class Chat extends React.Component {
           messages={this.state.messages}
           onSend={(messages) => this.onSend(messages)}
           user={{ _id: this.state.user._id, name: name }}
-        />       
+
+          // the prop renderActions
+          renderActions={this.renderCustomActions}
+
+          renderCustomView={this.renderCustomView}
+        />
         {/* for Android so that the input field won’t be hidden beneath the keyboard */}
         { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null }
       </View>

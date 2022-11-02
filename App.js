@@ -24,14 +24,16 @@ export default class App extends React.Component {
   //   this.state = { text: "" };
   // }
 
-    render() {
-  return (
-    <NavigationContainer>
-      <Tab.Navigator initialRouteName="Start">
-        <Tab.Screen name="Start" component={Start} />
-        <Tab.Screen name="Chat" component={Chat} />
-      </Tab.Navigator>
-    </NavigationContainer>
-  );
-}
+  
+
+  render() {
+    return (
+      <NavigationContainer>
+        <Tab.Navigator initialRouteName="Start">
+          <Tab.Screen name="Start" component={Start} />
+          <Tab.Screen name="Chat" component={Chat} />
+        </Tab.Navigator>
+      </NavigationContainer>
+    );
+  }
 }
