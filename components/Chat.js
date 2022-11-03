@@ -157,7 +157,7 @@ export default class Chat extends React.Component {
               {
               _id: 1,
               text: 'My message',
-              createdAt: new Date(Date.UTC(2016, 5, 11, 17, 20, 0)),
+              createdAt: new Date(),
               user: {
                 _id: 2,
                 name: 'React Native',
@@ -167,10 +167,10 @@ export default class Chat extends React.Component {
               },
               // Object 2
               {
-              _id: 1,
+              _id: 3,
               createdAt: new Date(),
               user: {
-                _id: 2,
+                _id: 4,
                 name: 'React Native',
                 avatar: 'https://placeimg.com/140/140/any',
               },
@@ -287,8 +287,6 @@ export default class Chat extends React.Component {
    }
    return null;
  }
-
- 
 
   render() {
 

@@ -1,94 +1,84 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import { connectActionSheet } from "@expo/react-native-action-sheet";
 
 // asks user for permission 
 import * as Permissions from "expo-permissions";
 
 // API
 import * as ImagePicker from "expo-image-picker";
-
 import * as Location from 'expo-location';
-
 
 export default class CustomActions extends React.Component {
 
-     imagePicker = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    console.log("Status from imagePicker: ", { status });
-    try {
-      if (status === "granted") {
-        const result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images, // only images are allowed
-        }).catch((error) => console.log(error));
-        console.log("Result: ", result);
-        if (!result.cancelled) {
-          const imageUrl = await this.uploadImageFetch(result.uri);
-          this.props.onSend({ image: imageUrl });
-          // console.log("from image picker function: ", { image });
-        }
-      }
-    } catch (error) {
+    // function for the user to pick an image from library with asking for permission
+    imagePicker = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        console.log("Status from imagePicker: ", { status });
+        try {
+            if (status === "granted") {
+                const result = await ImagePicker.launchImageLibraryAsync({ // the launchImageLibraryAsync API
+                    mediaTypes: ImagePicker.MediaTypeOptions.Images, // only images are allowed
+                }).catch((error) => console.log(error));
+                console.log("Result: ", result);
+
+                if (!result.cancelled) {
+                    const imageUrl = await this.uploadImageFetch(result.uri);
+                    this.props.onSend({ image: imageUrl });
+                }
+            }
+        } catch (error) {
       console.log(error.message);
     }
   };
 
-  takePhoto = async () => {
-    // const { status } = await Permissions.askAsync(
-    //   Permissions.CAMERA,
-    //   Permissions.MEDIA_LIBRARY
-    // );
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    try {
-      if (status === "granted") {
-        const result = await ImagePicker.launchCameraAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        }).catch((error) => console.log(error));
+  // function for the user to take a photo with asking for permission
+    takePhoto = async () => {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync(); // the launchCameraAsync API
+        try {
+            if (status === "granted") {
+                const result = await ImagePicker.launchCameraAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                }).catch((error) => console.log(error));
 
-        // console.log("Result: ", result);
-
-        if (!result.cancelled) {
-          const imageUrl = await this.uploadImageFetch(result.uri);
-          this.props.onSend({ image: imageUrl });
+                if (!result.cancelled) {
+                    const imageUrl = await this.uploadImageFetch(result.uri);
+                    this.props.onSend({ image: imageUrl });
+                }
+            }
+        } catch (error) {
+            console.log(error.message);
         }
-      }
-    } catch (error) {
-      console.log(error.message);
+    };
+    // function for the user to show his location with asking for permission
+    getLocation = async () => {
+        try {
+            const { status } = await Location.requestForegroundPermissionsAsync();
+            if (status === "granted") {
+                const result = await Location.getCurrentPositionAsync({}).catch(
+                (error) => console.log(error));
+        
+                if (result) {
+                    this.props.onSend({
+                        location: {
+                            longitude: result.coords.longitude,
+                            latitude: result.coords.latitude,
+                        },
+                    });
+                }
+            }
+        } catch (error) {
+        console.log(error.message);
     }
-  };
-
-  getLocation = async () => {
-    try {
-      // const { status } = await Permissions.askAsync(
-      //   Permissions.LOCATION_FOREGROUND
-      // );
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === "granted") {
-        const result = await Location.getCurrentPositionAsync({}).catch(
-          (error) => console.log(error)
-        );
-        // const longitude = JSON.stringify(result.coords.longitude);
-        // const altitude = JSON.stringify(result.coords.latitude);
-        if (result) {
-          this.props.onSend({
-            location: {
-              longitude: result.coords.longitude,
-              latitude: result.coords.latitude,
-            },
-          });
-        }
-      }
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
+    };
 
     // Function that handles communication features
     onActionPress = () => {
         const options = ['Choose from library', 'Take Picture', 'Send location', 'Cancel'];
         const cancelButtonIndex = options.length -1;
         // used to hand down data (the options you want to display) to the ActionSheet component
-        this.context.actionSheet().showActionSheetWithOptions(
+        this.props.showActionSheetWithOptions(
             {
                 options,
                 cancelButtonIndex,
@@ -147,3 +137,5 @@ const styles = StyleSheet.create({
     CustomActions.contextTypes = {
         actionSheet: PropTypes.func,
     };
+
+    CustomActions = connectActionSheet(CustomActions);
