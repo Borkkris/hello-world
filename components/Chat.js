@@ -153,27 +153,16 @@ export default class Chat extends React.Component {
           this.setState ({
             uid: this.state.user._id,
             messages: [
-              // object 1
-              {
-              _id: 1,
-              text: 'My message',
-              createdAt: new Date(),
-              user: {
-                _id: 2,
-                name: 'React Native',
-                avatar: 'https://facebook.github.io/react-native/img/header_logo.png',
-              },
-              image: 'https://facebook.github.io/react-native/img/header_logo.png',
-              },
-              // Object 2
+              // Object 1
               {
               _id: 3,
               createdAt: new Date(),
               user: {
                 _id: 4,
-                name: 'React Native',
-                avatar: 'https://placeimg.com/140/140/any',
+                name: 'Christian',
+                avatar: 'https://placeimg.https://firebasestorage.googleapis.com/v0/b/chatapp-528fd.appspot.com/o/Bildschirmfoto%202022-10-30%20um%2015.01.53.png?alt=media&token=ea2b0658-785a-4d99-987e-a3d4dd937744/140/140/any',
               },
+              // location
               location: {
                 latitude: 48.864601,
                 longitude: 2.398704,
@@ -267,14 +256,14 @@ export default class Chat extends React.Component {
     return <CustomActions {...props} />;
    };
 
-  
+  // showing the user’s location
   renderCustomView (props) {
   const { currentMessage} = props;
   if (currentMessage.location) {
     return (
         <MapView
-          style={{width: 150,
-            height: 100,
+          style={{width: 250,
+            height: 300,
             borderRadius: 13,
             margin: 3}}
           region={{
@@ -290,23 +279,28 @@ export default class Chat extends React.Component {
 
   render() {
 
-  let { color, name, speak } = this.props.route.params;
+  let { color, name } = this.props.route.params;
 
 
     return (
       <View style = {{ backgroundColor: color, flex:1}}> 
 
+        {/* GiftedChat */}
         <GiftedChat 
+          messages={this.state.messages}
+
+          isConnected={this.state.isConnected}
+
+
           renderBubble={this.renderBubble.bind(this)}
           renderInputToolbar={this.renderInputToolbar.bind(this)}
-          messages={this.state.messages}
-          onSend={(messages) => this.onSend(messages)}
-          user={{ _id: this.state.user._id, name: name }}
-
-          // the prop renderActions
-          renderActions={this.renderCustomActions}
-
           renderCustomView={this.renderCustomView}
+          // the prop renderActions
+          renderActions={this.renderCustomActions}     
+
+          onSend={(messages) => this.onSend(messages)}
+
+          user={{ _id: this.state.user._id, name: name }}
         />
         {/* for Android so that the input field won’t be hidden beneath the keyboard */}
         { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null }
