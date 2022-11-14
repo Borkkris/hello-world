@@ -30,7 +30,6 @@ Chat application using React Native. The app lets the user enter a name, pick a 
 ![Screenshot StartScreen](assets/tipIT_StartScreen.png "Screenshot StartScreen")
 ![Screenshot ChatScreen](assets/tipIT_ChatScreen.png "Screenshot ChatScreen")
 ![Screenshot SecurityAlert](assets/tipIT_Alert.png "Screenshot SecurityAlert")
-![Screenshot profile-view](src/screenshots/User-profile.png "Screenshot User-profile")
 
 ## Contact:
 Christian Bork: christianbork.private@gmail.com
